@@ -4,7 +4,29 @@ def getchar(words,pos):
 
 	if pos<0 or pos>=len(words): return None
 
-	return words[pos]
+	c = words[pos]
+	
+	if (c == '0' or c == '1') and state == 'q0' :
+		return 'HOUR_01'
+	if c == '2' and state == 'q0':
+		return 'HOUR_2'
+	if (c >= '3' and c <= '9') and state == 'q0' :
+		return 'HOUR_39'
+	if (c >= '0' and c <= '9') and state == 'q1':
+		return 'HOUR_09'
+	if (c == '.' or c == ':') and state == 'q1':
+		return 'SEPARATOR_1'
+	if (c >= '0' and c <= '3') and state == 'q2':
+		return 'HOUR_03'
+	if (c == '.' or c == ':') and state == 'q2':
+		return 'SEPARATOR_1'
+	if c == '.' or c == ':' :
+		return 'SEPARATOR'
+	if (c >= '0' and c <= '5') and state == 'q4':
+		return 'MINUTE_05'
+	if (c >= '0' and c <= '9') and state == 'q5':
+		return 'MINUTE_09'
+	
 	
 
 def scan(text,transition_table,accept_states):
@@ -39,24 +61,20 @@ def scan(text,transition_table,accept_states):
 # the transition table, as a dictionary
 
 # Αντικαταστήστε με το δικό σας λεξικό μεταβάσεων...
-td = { 'q0':{ 't':'q1','l':'q2' },
-       'q1':{ 'e':'q3' },
-       'q2':{ 'o':'q8' },
-       'q3':{ 's':'q4','r':'q6' },
-       'q4':{ 't':'q5' },
-       'q6':{ 'm':'q7' },
-       'q8':{ 'n':'q9' },
-       'q9':{ 'g':'q10'}
+td = { 'q0':{ 'HOUR_01':'q1', 'HOUR_2':'q2', 'HOUR_39':'q3' },
+       'q1':{ 'HOUR_09':'q3', 'SEPARATOR_1':'q4' },
+       'q2':{ 'HOUR_03':'q3', 'SEPARATOR_1':'q4' },
+       'q3':{ 'SEPARATOR':'q4' },
+       'q4':{ 'MINUTE_05':'q5' },
+       'q5':{ 'MINUTE_09':'q6' }
      } 
+
 
 # the dictionary of accepting states and their
 # corresponding token
 
 # Αντικαταστήστε με το δικό σας λεξικό καταστάσεων αποδοχής...
-ad = { 'q5':'TEST_TOKEN',
-       'q7':'TERM_TOKEN',
-       'q10':'LONG_TOKEN'
-     }
+ad = { 'q6':'TIME_TOKEN' }
 
 
 # get a string from input
